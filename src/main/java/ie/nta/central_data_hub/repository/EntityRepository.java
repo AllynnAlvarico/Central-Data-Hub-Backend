@@ -1,0 +1,48 @@
+package ie.nta.central_data_hub.repository;
+
+import ie.nta.central_data_hub.domain.Entity;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+/**
+ * Spring Data MongoDB repository for Entity domain model.
+ * Provides standard CRUD operations and custom query methods for Entity persistence.
+ */
+@Repository
+public interface EntityRepository extends MongoRepository<Entity, String> {
+
+    /**
+     * Find an entity by its business identifier (entityId).
+     *
+     * @param entityId the business entity identifier
+     * @return Optional containing the Entity if found, empty otherwise
+     */
+    Optional<Entity> findByEntityId(long entityId);
+
+    /**
+     * Find all entities by their status (statusId).
+     *
+     * @param statusId the status identifier (1=ACTIVE, 2=INACTIVE, 3=SUSPENDED)
+     * @return list of entities with the specified status
+     */
+    java.util.List<Entity> findByStatusId(int statusId);
+
+    /**
+     * Find an entity by its country.
+     *
+     * @param country the country name
+     * @return list of entities operating in the specified country
+     */
+    java.util.List<Entity> findByCountry(String country);
+
+    /**
+     * Check if an entity with the given entityId already exists.
+     *
+     * @param entityId the business entity identifier
+     * @return true if entity exists, false otherwise
+     */
+    boolean existsByEntityId(long entityId);
+}
+
