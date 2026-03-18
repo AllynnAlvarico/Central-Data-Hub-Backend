@@ -6,6 +6,52 @@ All notable changes to the Central Data Hub project are documented here. This do
 
 ---
 
+## [2026-03-18] | v0.0.3 | Enhancement | Entity Roles & Retrieval
+
+### Overview
+Added the ability to retrieve entities by their roles (Operators, Manufacturers, Suppliers) by linking the `Entity` model with the `EntityRole` association model.
+
+### Changes Made
+
+#### 1. **EntityRole.java** - MongoDB Domain Model Enhancement
+**File**: `src/main/java/ie/nta/central_data_hub/domain/assignment/EntityRole.java`
+
+**What Changed**:
+- ✅ Added `@Document(collection = "collection_entity_role")` annotation
+- ✅ Added `@Id` annotation on `id` field
+- ✅ Added `@Field` annotations for MongoDB field mapping:
+  - `@Field("entity_role_assignment_id")`
+  - `@Field("entity_id")`
+  - `@Field("entity_role_id")`
+- ✅ Added `toString()`, `equals()`, and `hashCode()` methods
+- ✅ Added no-arg constructor and parameterized constructor
+
+#### 2. **EntityRoleRepository.java** - NEW Repository
+**File**: `src/main/java/ie/nta/central_data_hub/repository/EntityRoleRepository.java` (NEW FILE)
+
+**What Was Created**:
+- ✅ Created `EntityRoleRepository` interface extending `MongoRepository<EntityRole, String>`
+- ✅ Added query methods:
+  - `findByEntityRoleId(int entityRoleId)`
+  - `findByEntityId(long entityId)`
+
+#### 3. **EntityService.java** - Role-based Retrieval Logic
+**File**: `src/main/java/ie/nta/central_data_hub/service/EntityService.java`
+
+**What Changed**:
+- ✅ Injected `EntityRoleRepository`
+- ✅ Implemented `getEntitiesByRole(RoleEntity role)` method to filter entities by their assigned roles
+
+#### 4. **EntityController.java** - Role-based REST Endpoints
+**File**: `src/main/java/ie/nta/central_data_hub/controller/EntityController.java`
+
+**What Changed**:
+- ✅ Added `GET /entities/operators` endpoint
+- ✅ Added `GET /entities/manufacturers` endpoint
+- ✅ Added `GET /entities/suppliers` endpoint
+
+---
+
 ## [2026-03-17] | v0.0.2 | Enhancement | Entity Domain & Repository Layer
 
 ### Overview

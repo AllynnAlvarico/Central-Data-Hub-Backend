@@ -47,11 +47,11 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
      */
     boolean existsByEntityId(long entityId);
 
-    // Search for entities where the name starts with the given letter (case-insensitive)
+    // Search for entities containing the given keyword in their name (case-insensitive)
     @Query("{ 'entity_name': { $regex: '?0', $options: 'i' } }")
     List<Entity> findByNameContaining(String keyword);
 
-    // Search for entities containing the given keyword in their name (case-insensitive)
+    // Search for entities where the name starts with the given letter (case-insensitive)
     @Query("{ 'entity_name': { $regex: '^?0', $options: 'i' } }")
     List<Entity> findByNameStartingWith(String letter);
 
