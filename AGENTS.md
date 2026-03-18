@@ -86,9 +86,11 @@ Comprehensive enum-based status tracking across multiple dimensions:
 - **Test Framework**: `spring-boot-starter-test` (JUnit 5 by default in Spring Boot 4)
 
 ### MongoDB Setup
+- **Spring Boot 4.0 Property Rename**: `spring.data.mongodb.*` is removed in Spring Boot 4.0 — always use `spring.mongodb.*` prefix for all MongoDB properties
 - **Configuration**: `config/MongoConfig.java` extends `AbstractMongoClientConfiguration`
 - **Connection**: MongoDB Atlas via connection string in `application.properties`
-- **Database**: Hardcoded to `"TestDatabase"` in `MongoConfig.getDatabaseName()`
+- **Database**: Reads from `spring.mongodb.database` property via `@Value` in `MongoConfig.getDatabaseName()`
+- **Target Database**: `Central_Data_Hub_Concept` (19 collections, ~423KB, Azure Europe North)
 - **Startup Verification**: `CentralDataHubApplication.java` includes CommandLineRunner bean that pings MongoDB at startup, logs available databases and collections for troubleshooting
 
 **⚠️ Important**: Connection string in properties contains credentials; ensure environment-specific configs are used in production.
@@ -210,7 +212,9 @@ The CommandLineRunner bean in `CentralDataHubApplication` performs:
 ### Configuration Management
 - Single properties file: `application.properties`
 - No Spring profiles configured (dev/test/prod separation not yet implemented)
-- **Action item for AI agents**: When implementing features, consider extracting MongoDB URI and database name to environment variables or application-{profile}.properties
+- **Spring Boot 4.0 Note**: Use `spring.mongodb.uri` and `spring.mongodb.database` (NOT `spring.data.mongodb.*` — those are removed in 4.0)
+- URI path must NOT contain the database name (e.g. end with `/` not `/TestDatabase`) — use `spring.mongodb.database` property instead, otherwise it overrides `MongoConfig.getDatabaseName()`
+- **Resolved (2026-03-18)**: `MongoConfig.getDatabaseName()` now reads from `spring.mongodb.database` property. URI and database name are already separated. Next step: implement Spring profiles for dev/staging/prod.
 
 ---
 
@@ -246,4 +250,3 @@ When modifying this codebase:
 3. **Test MongoDB connectivity**: After configuration changes, verify startup diagnostics log successful connection
 4. **Document status code meanings**: When adding new status enums, include javadoc comments explaining numeric IDs and their lifecycle purpose
 5. **Avoid hardcoded values**: The hardcoded `"TestDatabase"` database name should be externalized for multi-environment deployments
-

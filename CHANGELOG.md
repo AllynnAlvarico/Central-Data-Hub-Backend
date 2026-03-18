@@ -227,3 +227,42 @@ Brief summary of what was done and why.
 **Maintained By**: AI Code Agents  
 **Project**: Central Data Hub (NTA)
 
+---
+
+## [2026-03-18] | v0.0.3 | Fix | MongoDB Connection & Configuration Layer
+
+### Overview
+Resolved a series of cascading configuration issues that prevented the application from connecting
+to the correct MongoDB database (`Central_Data_Hub_Concept`) and returning entity data. Root cause
+was a hardcoded database name in `MongoConfig.java` that overrode all `application.properties` settings.
+
+### Changes Made
+
+#### 1. **MongoConfig.java** - Database Name Decoupled from Hardcode
+**File**: `src/main/java/ie/nta/central_data_hub/config/MongoConfig.java`
+
+**What Changed**:
+- ✅ Replaced hardcoded `return "TestDatabase"` in `getDatabaseName()` with `@Value`-injected property
+- ✅ Added `@Value("${spring.mongodb.database}")` field `databaseName`
+- ✅ `getDatabaseName()` now returns `databaseName` from `application.properties`
+
+**Why This Change**:
+- `getDatabaseName()` in `AbstractMongoClientConfiguration` takes highest priority over all property files
+- Hardcoded `"TestDatabase"` silently overrode every `application.properties` change
+- Using `@Value` allows environment-specific database switching without modifying Java code
+
+**Before**:
+```java
+@Override
+protected String getDatabaseName() {
+    return "TestDatabase";
+}
+@Value("${spring.mongodb.database}")
+private String databaseName;
+
+@Override
+protected String getDatabaseName() {
+    return databaseName;
+}
+```
+

@@ -2,8 +2,10 @@ package ie.nta.central_data_hub.repository;
 
 import ie.nta.central_data_hub.domain.Entity;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,5 +46,14 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
      * @return true if entity exists, false otherwise
      */
     boolean existsByEntityId(long entityId);
+
+    // Search for entities where the name starts with the given letter (case-insensitive)
+    @Query("{ 'entity_name': { $regex: '?0', $options: 'i' } }")
+    List<Entity> findByNameContaining(String keyword);
+
+    // Search for entities containing the given keyword in their name (case-insensitive)
+    @Query("{ 'entity_name': { $regex: '^?0', $options: 'i' } }")
+    List<Entity> findByNameStartingWith(String letter);
+
 }
 
