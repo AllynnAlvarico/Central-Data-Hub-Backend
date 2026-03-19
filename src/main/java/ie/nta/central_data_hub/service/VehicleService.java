@@ -18,6 +18,10 @@ public class VehicleService {
         return vehicleRepository.findAll();
     }
 
+    public Vehicle getVehicleByFleetNumber(String fleetNumber) {
+        return vehicleRepository.findByFleetNumber(fleetNumber);
+    }
+
     public Optional<Vehicle> getVehicleByBusinessId(long vehicleId) {
         return vehicleRepository.findByVehicleId(vehicleId);
     }

@@ -14,6 +14,9 @@ public interface VehicleRepository extends MongoRepository<Vehicle, String> {
     @Query("{ 'vehicle_id': ?0 }")
     Optional<Vehicle> findByVehicleId(long vehicleId);
 
+    @Query("{ 'fleet_number': ?0 }")
+    Vehicle findByFleetNumber(String fleetNumber);
+    
     @Query("{ 'registration': { $regex: '?0', $options: 'i' } }")
     List<Vehicle> findByRegistrationContaining(String keyword);
 
@@ -21,5 +24,6 @@ public interface VehicleRepository extends MongoRepository<Vehicle, String> {
     List<Vehicle> findByRegistrationStartingWith(String prefix);
 
     List<Vehicle> findByOperator(long operatorId);
+
 
 }

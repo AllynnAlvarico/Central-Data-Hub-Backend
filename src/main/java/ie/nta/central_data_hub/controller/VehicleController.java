@@ -27,6 +27,16 @@ public class VehicleController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/fleet/{fleetNumber}")
+    public ResponseEntity<Vehicle> getVehicleByFleetNumber(@PathVariable String fleetNumber) {
+        Vehicle vehicle = vehicleService.getVehicleByFleetNumber(fleetNumber);
+        if (vehicle != null) {
+            return ResponseEntity.ok(vehicle);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/search/starts-with/{prefix}")
     public List<Vehicle> searchByRegistrationStartingWith(@PathVariable String prefix) {
         return vehicleService.searchByRegistrationStartingWith(prefix);
