@@ -6,6 +6,65 @@ All notable changes to the Central Data Hub project are documented here. This do
 
 ---
 
+## [2026-03-19] | v0.0.4 | Enhancement | Vehicle Domain & Repository Layer
+
+### Overview
+Implemented the Vehicle domain model with full MongoDB mapping annotations, created the Vehicle repository, service, and controller layers to mirror the Entity implementation.
+
+### Changes Made
+
+#### 1. **Vehicle.java** - MongoDB Domain Model Enhancement
+**File**: `src/main/java/ie/nta/central_data_hub/domain/vehicle/Vehicle.java`
+
+**What Changed**:
+- ✅ Added `@Document(collection = "collection_vehicle")` annotation
+- ✅ Added `@Id` annotation on `id` field
+- ✅ Added `@Field` annotations for MongoDB field mapping:
+  - `@Field("vehicle_id")`
+  - `@Field("vehicle_model_id")`
+  - `@Field("fleet_number")` (Corrected from `fleet_id`)
+  - `@Field("operator")`
+  - `@Field("year_entered_service")`
+  - `@Field("contract_id")`
+  - `@Field("registration")` (Corrected from `registration_number`)
+- ✅ Added no-arg constructor
+- ✅ Added `toString()`, `equals()`, and `hashCode()` methods
+
+#### 2. **VehicleRepository.java** - NEW Repository
+**File**: `src/main/java/ie/nta/central_data_hub/repository/VehicleRepository.java`
+
+**What Changed**:
+- ✅ Fixed `VehicleRepository` to correctly extend `MongoRepository<Vehicle, String>`
+- ✅ Added query methods:
+  - `findByVehicleId(long vehicleId)`
+  - `findByRegistrationContaining(String keyword)`
+  - `findByRegistrationStartingWith(String prefix)`
+  - `findByOperator(long operatorId)`
+
+#### 3. **VehicleService.java** - NEW Service
+**File**: `src/main/java/ie/nta/central_data_hub/service/VehicleService.java`
+
+**What Was Created**:
+- ✅ Implemented `VehicleService` with methods for retrieval and search:
+  - `getAllVehicles()`
+  - `getVehicleByBusinessId(long vehicleId)`
+  - `searchByRegistrationStartingWith(String prefix)`
+  - `searchByRegistrationContaining(String keyword)`
+  - `getVehiclesByOperator(long operatorId)`
+
+#### 4. **VehicleController.java** - NEW Controller
+**File**: `src/main/java/ie/nta/central_data_hub/controller/VehicleController.java`
+
+**What Was Created**:
+- ✅ Implemented `VehicleController` with REST endpoints:
+  - `GET /vehicles`
+  - `GET /vehicles/{id}`
+  - `GET /vehicles/search/starts-with/{prefix}`
+  - `GET /vehicles/search/contains?keyword={keyword}`
+  - `GET /vehicles/operator/{operatorId}`
+
+---
+
 ## [2026-03-18] | v0.0.3 | Enhancement | Entity Roles & Retrieval
 
 ### Overview
