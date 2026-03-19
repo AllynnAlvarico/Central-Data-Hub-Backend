@@ -37,7 +37,7 @@ public class VehicleController {
         }
     }
 
-    @GetMapping("/search/starts-with/{prefix}")
+    @GetMapping("/search/registration/starts-with/{prefix}")
     public List<Vehicle> searchByRegistrationStartingWith(@PathVariable String prefix) {
         return vehicleService.searchByRegistrationStartingWith(prefix);
     }
@@ -50,5 +50,15 @@ public class VehicleController {
     @GetMapping("/operator/{operatorId}")
     public List<Vehicle> getVehiclesByOperator(@PathVariable long operatorId) {
         return vehicleService.getVehiclesByOperator(operatorId);
+    }
+
+    @GetMapping("/operator/{operatorId}/count")
+    public int getVehicleCountByOperator(@PathVariable long operatorId) {
+        return vehicleService.getVehicleCountByOperator(operatorId);
+    }
+
+    @GetMapping("/total-count")
+    public int getVehicleTotalCount() {
+        return vehicleService.getVehicleTotalCount();
     }
 }

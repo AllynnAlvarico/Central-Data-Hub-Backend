@@ -37,4 +37,12 @@ public class VehicleService {
     public List<Vehicle> getVehiclesByOperator(long operatorId) {
         return vehicleRepository.findByOperator(operatorId);
     }
+
+    public int getVehicleCountByOperator(long operatorId) {
+        return vehicleRepository.findByOperator(operatorId).size();
+    }
+
+    public int getVehicleTotalCount() {
+        return (int) vehicleRepository.count();
+    }
 }
