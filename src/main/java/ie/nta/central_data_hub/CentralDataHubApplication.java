@@ -17,9 +17,8 @@ public class CentralDataHubApplication{
 
     public static void main(String[] args) {
         SpringApplication.run(CentralDataHubApplication.class, args);
-
     }
-//    @GetMapping("/ping")  // ← add this
+//    @GetMapping("/ping")
 //    public String ping() {
 //        return "pong";
 //    }

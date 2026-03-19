@@ -43,7 +43,7 @@ public class EntityService {
         
         List<Long> entityIds = associations.stream()
                 .map(EntityRole::getEntityId)
-                .collect(Collectors.toList());
+                .toList();
                 
         return entityRepository.findAll().stream()
                 .filter(entity -> entityIds.contains(entity.getEntityId()))
