@@ -40,5 +40,5 @@
 - ⏳ Device Context Implementation
 
 ---
-**Maintained by**: National Transport Authority (NTA)  
+**Maintained by**: Allynn Alvarico
 **Last Updated**: 2026-03-19
