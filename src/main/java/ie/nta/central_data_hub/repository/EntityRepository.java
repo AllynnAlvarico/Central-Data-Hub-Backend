@@ -29,7 +29,7 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
      * @param statusId the status identifier (1=ACTIVE, 2=INACTIVE, 3=SUSPENDED)
      * @return list of entities with the specified status
      */
-    java.util.List<Entity> findByStatusId(int statusId);
+    List<Entity> findByStatusId(int statusId);
 
     /**
      * Find an entity by its country.
@@ -37,7 +37,7 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
      * @param country the country name
      * @return list of entities operating in the specified country
      */
-    java.util.List<Entity> findByCountry(String country);
+    List<Entity> findByCountry(String country);
 
     /**
      * Check if an entity with the given entityId already exists.
