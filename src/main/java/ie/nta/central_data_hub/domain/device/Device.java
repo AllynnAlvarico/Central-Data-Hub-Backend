@@ -1,15 +1,48 @@
 package ie.nta.central_data_hub.domain.device;
 
+/**
+ * Device domain model representing hardware or IoT devices installed on vehicles.
+ */
 public class Device {
 
+    /**
+     * Unique identifier for the device.
+     */
     private int deviceId;
+
+    /**
+     * Identifier for the device model specifications.
+     */
     private int deviceModelId;
+
+    /**
+     * Manufacturer-provided serial number.
+     */
     private String serialNumber;
+
+    /**
+     * Operational health status (maps to StatusDeviceCurrent enum).
+     */
     private int currentStatusId;
+
+    /**
+     * Deployment/installation state (maps to StatusConditionDevice enum).
+     */
     private int conditionStatusId;
+
+    /**
+     * Timestamp of the last device status update.
+     */
     private String lastUpdate;
+
+    /**
+     * Additional notes regarding the device's condition or deployment.
+     */
     private String notes;
 
+    /**
+     * Parameterized constructor for manual device creation.
+     */
     public Device(int deviceId, int deviceModelId, String serialNumber, int currentStatusId, String lastUpdate, String notes) {
         this.deviceId = deviceId;
         this.deviceModelId = deviceModelId;

@@ -93,7 +93,7 @@ Comprehensive enum-based status tracking across multiple dimensions:
 - **Target Database**: `Central_Data_Hub_Concept` (19 collections, ~423KB, Azure Europe North)
 - **Startup Verification**: `CentralDataHubApplication.java` includes CommandLineRunner bean that pings MongoDB at startup, logs available databases and collections for troubleshooting
 
-**⚠️ Important**: Connection string in properties contains credentials; ensure environment-specific configs are used in production.
+**⚠️ Resolved (2026-03-18)**: `MongoConfig.getDatabaseName()` now reads from `spring.mongodb.database` property. URI and database name are already separated. 
 
 ---
 
@@ -121,54 +121,76 @@ Comprehensive enum-based status tracking across multiple dimensions:
 
 ## Code Patterns & Conventions
 
+### JavaDoc Documentation
+The project enforces comprehensive JavaDoc documentation for all classes, fields, and methods to ensure maintainability and clarity for both developers and AI agents.
+- **Classes**: Should include a brief description of their purpose and MongoDB collection mapping (if applicable).
+- **Fields**: Should describe the data they hold and their mapping to database fields.
+- **Methods**: Should explain their functionality, parameters, and return values.
+
 ### Entity Design Pattern
-Domain classes follow a **stateless getter/setter pattern** (Lombok available but not yet applied):
+Domain classes follow a **stateless getter/setter pattern** with MongoDB mapping annotations:
 - **No-argument constructor** for MongoDB deserialization (required for Spring Data)
 - **Parameterized constructor** with all fields for convenient object creation
 - **Individual setter/getter methods** for each private field (no validation logic)
+- **MongoDB Annotations**: Use `@Document`, `@Id`, and `@Field` to map domain objects to MongoDB collections and fields.
 - **No @Data, @Getter, @Setter annotations** applied yet — significant boilerplate reduction opportunity
 
 **Canonical Example** (from `Entity.java`):
 ```java
-public Entity() {}  // Required for serialization
+@Document(collection = "collection_entity")
+public class Entity {
+    @Id
+    private String id;
+    
+    @Field("entity_id")
+    private long entityId;
+    
+    // ... fields
+    
+    public Entity() {}  // Required for serialization
 
-public Entity(long entityId, String entityName, String country, int statusId) {
-    this.entityId = entityId;
-    this.entityName = entityName;
-    this.country = country;
-    this.statusId = statusId;
+    public Entity(long entityId, ...) {
+        this.entityId = entityId;
+        // ...
+    }
+
+    public long getEntityId() { return entityId; }
+    public void setEntityId(long entityId) { this.entityId = entityId; }
+    // ... repeat for each field
 }
-
-public long getEntityId() { return entityId; }
-public void setEntityId(long entityId) { this.entityId = entityId; }
-// ... repeat for each field
 ```
 
 **MongoDB Considerations**: 
-- Field names in POJO match MongoDB collection field names (lowercase with underscores if stored that way)
+- Field names in POJO match MongoDB collection field names via `@Field` annotations.
 - MongoDB uses the no-arg constructor for deserialization via Spring Data MongoDB
-- No `@Document` annotation used yet — relying on type inference from MongoTemplate
+- Use `MongoRepository` for standard CRUD and custom query methods.
 
 **Recommendation for AI agents**: When adding new domain classes, follow this exact pattern for consistency. Do NOT add Lombok annotations yet—this is a deliberate convention to maintain readability during this phase. Lombok migration is a future refactoring task.
 
 ### Package Structure
 ```
 ie.nta.central_data_hub
-├── domain/
-│   ├── Entity.java, Contract.java, Depot.java    # Root entities
-│   ├── device/                                    # Device bounded context
-│   │   ├── Device.java, DeviceModel.java, DeviceType.java
-│   │   └── VehicleCurrentDevice.java             # Cross-context association
-│   ├── vehicle/                                   # Vehicle bounded context
-│   │   ├── Vehicle.java, VehicleModel.java
-│   │   └── VehicleCurrentProfile.java            # Cross-context association
-│   └── assignment/                                # Assignment bounded context
-│       ├── DepotEntity.java
-│       └── EntityRole.java
-├── enums/
-│   ├── StatusEntity.java, StatusVehicle.java, StatusContract.java
-│   ├── StatusDeviceCurrent.java, StatusConditionDevice.java
-│   └── RoleEntity.java
+├── domain/                                        # Domain entities with MongoDB mapping
+│   ├── Entity.java, Contract.java, Depot.java
+│   ├── device/                                    # Device context
+│   └── vehicle/                                   # Vehicle context
+├── repository/                                    # Spring Data MongoDB repositories
+│   ├── EntityRepository.java
+│   ├── VehicleRepository.java
+│   ├── VehicleModelRepository.java
+│   ├── ContractRepository.java
+│   └── EntityRoleRepository.java
+├── service/                                       # Service layer for business logic
+│   ├── EntityService.java
+│   ├── VehicleService.java
+│   ├── VehicleModelService.java
+│   └── ContractService.java
+├── controller/                                    # REST Controllers
+│   ├── EntityController.java
+│   ├── VehicleController.java
+│   ├── VehicleModelController.java
+│   └── ContractController.java
+├── enums/                                         # Status and role enumerations
 ├── config/
 │   └── MongoConfig.java                          # MongoDB client & database setup
 └── CentralDataHubApplication.java                # Spring Boot entry point & diagnostics bean
@@ -181,9 +203,7 @@ ie.nta.central_data_hub
 ### MongoDB Collections
 The application dynamically discovers and logs all collections in all databases (except system DBs) during startup. This aids debugging and understanding the data schema without separate documentation.
 
-**Current Test Database** (`TestDatabase`):
-- Accessible via connection string in `application.properties`
-- Collections are logged in application output on startup
+**Current Database**: `Central_Data_Hub_Concept` (configured in `application.properties`)
 
 ### Startup Diagnostics
 The CommandLineRunner bean in `CentralDataHubApplication` performs:
@@ -205,9 +225,10 @@ The CommandLineRunner bean in `CentralDataHubApplication` performs:
 4. Check startup logs for MongoDB collection discovery and connection status
 
 ### Common Tasks
-- **Adding new domain entities**: Create class in `domain/`, add corresponding status enum in `enums/` if needed, follow getter/setter pattern
-- **Updating MongoDB schema**: Collections are dynamically discovered; no schema migration tooling configured yet
-- **Running tests**: `./mvnw test` — currently minimal test coverage (only `CentralDataHubApplicationTests.java`)
+- **Adding new domain entities**: Create class in `domain/`, add corresponding status enum in `enums/` if needed, follow getter/setter pattern with `@Document` mapping.
+- **Creating Repositories**: Extend `MongoRepository<T, String>` and add custom query methods following naming conventions.
+- **Implementing Services**: Inject repositories and provide methods for retrieval, search, and business logic.
+- **Exposing Endpoints**: Create controllers with `@RestController` and `@RequestMapping`.
 
 ### Configuration Management
 - Single properties file: `application.properties`
@@ -220,12 +241,12 @@ The CommandLineRunner bean in `CentralDataHubApplication` performs:
 
 ## Known Gaps & Future Considerations
 
-1. **No Repository Layer**: Domain classes exist but no Spring Data MongoDB `@Repository` interfaces configured for data persistence
-2. **No REST Controllers**: Application currently has no HTTP endpoints exposed
-3. **Minimal Error Handling**: Domain classes have no validation or exception handling
-4. **No Logging Strategy**: Domain layer has no structured logging pattern (only application startup logging)
-5. **Test Coverage**: Only application context test exists; no domain logic or integration tests
-6. **Lombok Underutilized**: Imported but not used; significant boilerplate reduction opportunity
+1. **Repository Layer Incomplete**: Some domain classes (Depot, Device, etc.) lack repository interfaces.
+2. **REST Controllers Incomplete**: Some domain contexts lack controllers.
+3. **Minimal Error Handling**: Domain classes and services have no validation or exception handling.
+4. **No Logging Strategy**: Domain layer has no structured logging pattern (only application startup logging).
+5. **Test Coverage**: Only application context test and some specific data retrieval tests exist; more coverage needed.
+6. **Lombok Underutilized**: Imported but not used; significant boilerplate reduction opportunity.
 
 ---
 
@@ -237,6 +258,9 @@ The CommandLineRunner bean in `CentralDataHubApplication` performs:
 | `config/MongoConfig.java` | MongoDB client setup and database configuration |
 | `CentralDataHubApplication.java` | Spring Boot entry point, startup diagnostics |
 | `domain/*.java` | Entity/model classes (Vehicle, Device, Entity, etc.) |
+| `repository/*.java` | Data access layer using Spring Data MongoDB |
+| `service/*.java` | Business logic and repository coordination |
+| `controller/*.java` | REST API endpoints |
 | `enums/*.java` | Status and role enumerations with semantic mappings |
 | `application.properties` | MongoDB connection string and app metadata |
 
@@ -245,8 +269,9 @@ The CommandLineRunner bean in `CentralDataHubApplication` performs:
 ## Communication for AI Agents
 
 When modifying this codebase:
-1. **Preserve domain model structure**: Domain classes use a specific pattern; maintain consistency
-2. **Consider MongoDB impedance**: Ensure new domain classes are persistable to MongoDB (avoid complex nested structures without proper serialization)
-3. **Test MongoDB connectivity**: After configuration changes, verify startup diagnostics log successful connection
-4. **Document status code meanings**: When adding new status enums, include javadoc comments explaining numeric IDs and their lifecycle purpose
-5. **Avoid hardcoded values**: The hardcoded `"TestDatabase"` database name should be externalized for multi-environment deployments
+1. **Preserve domain model structure**: Domain classes use a specific pattern; maintain consistency.
+2. **Consider MongoDB mapping**: Use `@Document`, `@Id`, and `@Field` annotations for new domain classes.
+3. **Follow the Repository-Service-Controller pattern**: Ensure new features are layered correctly.
+4. **Test MongoDB connectivity**: After configuration changes, verify startup diagnostics log successful connection.
+5. **Document status code meanings**: When adding new status enums, include javadoc comments explaining numeric IDs and their lifecycle purpose.
+6. **Avoid hardcoded values**: Use `application.properties` for configuration.

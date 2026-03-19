@@ -12,7 +12,11 @@ docs/MODIFICATIONS/
 │   ├── ENTITY_REPOSITORY_CREATION.md  # EntityRepository interface creation
 │   └── SUMMARY.md                     # Daily summary of changes
 ├── 2026-03-18/
-│   ├── (Future modifications)
+│   ├── CONFIG_MONGO_FIX.md            # MongoDB connection configuration fix
+│   ├── ENTITY_ROLE_RETRIEVAL.md       # Role-based entity filtering
+│   └── SUMMARY.md
+├── 2026-03-19/
+│   ├── VEHICLE_DOMAIN_LAYER.md        # Vehicle domain, repo, service, controller
 │   └── SUMMARY.md
 └── TEMPLATE.md                        # Template for new modifications
 ```
@@ -44,11 +48,20 @@ Each modification file should include:
 
 ## Recent Modifications Summary
 
+### [2026-03-19] Vehicle Domain & API Layer
+- Implemented full Vehicle layer: Domain, Repository, Service, and Controller.
+- Added MongoDB mapping to Vehicle domain.
+- Created REST endpoints for vehicle retrieval and search.
+
+### [2026-03-18] Entity Roles & Config Fix
+- Implemented role-based entity retrieval.
+- Fixed MongoDB database name configuration to use properties instead of hardcode.
+- Enhanced EntityRole domain with MongoDB mapping.
+
 ### [2026-03-17] Entity & Repository Layer Setup
-- Enhanced Entity.java with MongoDB annotations
-- Created EntityRepository interface with custom query methods
-- Added helper methods (toString, equals, hashCode)
-- Established repository pattern for data persistence
+- Enhanced Entity.java with MongoDB annotations.
+- Created EntityRepository interface with custom query methods.
+- Established repository pattern for data persistence.
 
 ---
 
@@ -58,6 +71,9 @@ Each modification file should include:
 |--------------|------|-----------|--------|
 | Entity MongoDB Mapping | 2026-03-17 | Domain/Entity | ✅ Complete |
 | EntityRepository Creation | 2026-03-17 | Repository/Entity | ✅ Complete |
+| MongoDB Config Fix | 2026-03-18 | Config/Mongo | ✅ Complete |
+| Entity Role Retrieval | 2026-03-18 | Service/Entity | ✅ Complete |
+| Vehicle Domain Layer | 2026-03-19 | Vehicle Context | ✅ Complete |
 
 ---
 

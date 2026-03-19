@@ -6,6 +6,99 @@ All notable changes to the Central Data Hub project are documented here. This do
 
 ---
 
+## [2026-03-19] | v0.0.6 | Documentation | Project-wide JavaDoc & Modification Logs
+
+### Overview
+Added comprehensive JavaDoc documentation for all classes, fields, and methods to improve codebase maintainability. Established a structured modification tracking system in the `docs/MODIFICATIONS` folder.
+
+### Changes Made
+
+#### 1. **Project-wide JavaDoc Implementation**
+**Component**: All Domain, Repository, Service, Controller, and Enum classes.
+
+**What Changed**:
+- ✅ Added class-level documentation explaining purpose and database mappings.
+- ✅ Added field-level documentation for all private members.
+- ✅ Added method-level documentation for all public APIs, including parameters and return types.
+
+#### 2. **Modification Tracking System**
+**File**: `docs/MODIFICATIONS/`
+
+**What Was Created**:
+- ✅ Created directory structure for date-based modification logging.
+- ✅ Added `CONTRACT_DOMAIN_IMPLEMENTATION.md` and `VEHICLE_DOMAIN_IMPLEMENTATION.md` for today's technical changes.
+- ✅ Added `SUMMARY.md` for daily progress overview.
+
+#### 3. **AGENTS.md Update**
+**File**: `AGENTS.md`
+
+**What Changed**:
+- ✅ Updated package structure to include new repositories, services, and controllers.
+- ✅ Added section on JavaDoc documentation standards.
+- ✅ Refined "Known Gaps" and "Future Considerations" based on today's progress.
+
+---
+
+## [2026-03-19] | v0.0.5 | Enhancement | Contract Domain & Repository Layer
+
+### Overview
+Implemented the Contract domain model with full MongoDB mapping annotations, created the Contract repository, service, and controller layers to provide access to contract data.
+
+### Changes Made
+
+#### 1. **Contract.java** - MongoDB Domain Model Enhancement
+**File**: `src/main/java/ie/nta/central_data_hub/domain/Contract.java`
+
+**What Changed**:
+- ✅ Added `@Document(collection = "collection_contract")` annotation
+- ✅ Added `@Id` annotation on `id` field
+- ✅ Added `@Field` annotations for MongoDB field mapping:
+  - `@Field("contract_id")`
+  - `@Field("contract_abbr")`
+  - `@Field("contract_name")`
+  - `@Field("entity_id")`
+  - `@Field("contract_type")`
+  - `@Field("status_id")`
+- ✅ Added no-arg constructor
+- ✅ Added `toString()`, `equals()`, and `hashCode()` methods
+
+#### 2. **ContractRepository.java** - NEW Repository
+**File**: `src/main/java/ie/nta/central_data_hub/repository/ContractRepository.java`
+
+**What Was Created**:
+- ✅ Created `ContractRepository` interface extending `MongoRepository<Contract, String>`
+- ✅ Added query methods:
+  - `findByContractId(int contractId)`
+  - `findByStatusId(int statusId)`
+  - `findByEntityId(int entityId)`
+  - `findByContractType(String contractType)`
+
+#### 3. **ContractService.java** - NEW Service
+**File**: `src/main/java/ie/nta/central_data_hub/service/ContractService.java`
+
+**What Was Created**:
+- ✅ Implemented `ContractService` with methods for retrieval:
+  - `getAllContracts()`
+  - `getContractByBusinessId(int contractId)`
+  - `getContractsByStatus(int statusId)`
+  - `getContractsByEntity(int entityId)`
+  - `getContractsByType(String contractType)`
+  - `getContractTotalCount()`
+
+#### 4. **ContractController.java** - NEW Controller
+**File**: `src/main/java/ie/nta/central_data_hub/controller/ContractController.java`
+
+**What Was Created**:
+- ✅ Implemented `ContractController` with REST endpoints:
+  - `GET /contracts/all`
+  - `GET /contracts/{id}`
+  - `GET /contracts/status/{statusId}`
+  - `GET /contracts/entity/{entityId}`
+  - `GET /contracts/type?type={type}`
+  - `GET /contracts/total-count`
+
+---
+
 ## [2026-03-19] | v0.0.4 | Enhancement | Vehicle Domain & Repository Layer
 
 ### Overview

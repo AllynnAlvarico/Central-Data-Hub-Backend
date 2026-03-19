@@ -1,13 +1,38 @@
 package ie.nta.central_data_hub.domain;
 
+/**
+ * Depot domain model representing a physical operational or storage location.
+ */
 public class Depot {
 
+    /**
+     * Unique identifier for the depot.
+     */
     private int depotId;
+
+    /**
+     * Short code or abbreviation for the depot.
+     */
     private String depotCode;
+
+    /**
+     * Full name of the depot.
+     */
     private String depotName;
+
+    /**
+     * Identifier of the entity (operator) that manages this depot.
+     */
     private int depotOperatorId;
+
+    /**
+     * Geographical or descriptive location name.
+     */
     private String locationName;
 
+    /**
+     * Parameterized constructor for manual depot creation.
+     */
     public Depot(int depotId, String depotCode, String depotName, int depotOperatorId, String locationName) {
         this.depotId = depotId;
         this.depotCode = depotCode;

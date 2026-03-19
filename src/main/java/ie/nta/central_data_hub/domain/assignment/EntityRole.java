@@ -5,24 +5,43 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * EntityRole association model mapping an entity to its role in the system.
- * Examples: operators, manufacturers, suppliers.
+ * Maps to the "assignment_entity_role" MongoDB collection.
+ * Roles can include: Authority, Operator, Supplier, Manufacturer.
  */
 @Document(collection = "assignment_entity_role")
 public class EntityRole {
+    /**
+     * MongoDB document identifier.
+     */
     @Id
     private String id;
 
+    /**
+     * Unique identifier for the role assignment record.
+     */
     @Field("entity_role_assignment_id")
     private int entityRoleAssignmentId;
 
+    /**
+     * Identifier of the entity being assigned a role.
+     */
     @Field("entity_id")
     private long entityId;
 
+    /**
+     * Identifier of the role assigned to the entity (maps to RoleEntity enum).
+     */
     @Field("entity_role_id")
     private int entityRoleId;
 
+    /**
+     * Default constructor required for MongoDB deserialization.
+     */
     public EntityRole() {}
 
+    /**
+     * Parameterized constructor for manual entity role assignment creation.
+     */
     public EntityRole(int entityRoleAssignmentId, long entityId, int entityRoleId) {
         this.entityRoleAssignmentId = entityRoleAssignmentId;
         this.entityId = entityId;

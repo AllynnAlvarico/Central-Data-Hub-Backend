@@ -1,15 +1,48 @@
 package ie.nta.central_data_hub.domain.vehicle;
 
+/**
+ * VehicleCurrentProfile domain model tracking current vehicle deployment state.
+ */
 public class VehicleCurrentProfile{
 
+    /**
+     * Identifier of the vehicle.
+     */
     private int vehicleId;
+
+    /**
+     * Identifier of the contract the vehicle is currently operating under.
+     */
     private int contractId;
+
+    /**
+     * Identifier of the entity (operator) currently using the vehicle.
+     */
     private int operatorId;
+
+    /**
+     * Identifier of the depot where the vehicle is currently based.
+     */
     private int depotId;
+
+    /**
+     * Current status of the vehicle (maps to StatusVehicle enum).
+     */
     private int vehicleStatusId;
+
+    /**
+     * Timestamp of the last profile update.
+     */
     private String updatedAt;
+
+    /**
+     * Additional notes regarding the current assignment.
+     */
     private String notes;
 
+    /**
+     * Parameterized constructor for manual vehicle profile creation.
+     */
     public VehicleCurrentProfile(int vehicleId, int contractId, int operatorId, int depotId, int vehicleStatusId, String updatedAt, String notes) {
         this.vehicleId = vehicleId;
         this.contractId = contractId;
